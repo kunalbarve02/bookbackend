@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const Book = require("./model/books");
+const data = require('./history.json')
 
 //DB connection
 mongoose
@@ -26,17 +27,15 @@ app.use(cors());
 
 const authRoutes = require('./Routes/auth')
 const userRoutes = require('./Routes/user')
+const bookRoutes = require('./Routes/books')
 
 //My Routes
 app.use("/api", authRoutes);
 app.use("/api", userRoutes);
+app.use("/api", bookRoutes);
 
 //PORT
 const port = 8000;
-
-Book.find({})
-.then(()=>console.log("OK"))
-.catch((err)=>console.log(err))
 
 //Starting a server
 app.listen(port, () => {
