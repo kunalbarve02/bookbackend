@@ -30,6 +30,12 @@ var userSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
+    wishlist: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Book"
+      }
+    ]
   },
   { timestamps: true }
 );

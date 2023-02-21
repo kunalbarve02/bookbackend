@@ -1,3 +1,4 @@
+const Book = require('../model/books')
 const Books = require('../model/books')
 
 exports.getAllBooks = (req,res)=>{
@@ -26,16 +27,78 @@ exports.getBookById = (req, res) => {
       });
 };
   
-exports.getAllBooksSorted = (req, res) => {
-    let order = 1
-    if(req.body.order==="asc")
-        order = 1
-    if(req.body.order==="dsc") 
-        order =-1
-    Books.find()
-      .sort({ price: order })
-      .then((data) => {
-        res.json(data)
-      })
-      .catch((err) => console.log(err))
-  }  
+exports.getAllBooksSortedByPrice = (req, res) => {
+  const { order } = req.query;
+  
+  let sortOrder = 1;
+  if (order === 'desc') {
+    sortOrder = -1;
+  }
+
+  Book.find()
+    .sort({ 'Paperback.Hardcover Price': sortOrder })
+    .then((books) => {
+      res.json(books);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: 'Error getting books by price' });
+    });
+}  
+
+exports.getAllBooksSortedByRating = (req, res) => {
+  const { order } = req.query;
+  
+  let sortOrder = 1;
+  if (order === 'desc') {
+    sortOrder = -1;
+  }
+
+  Book.find()
+  .sort({ "Rating out of 5 stars": sortOrder }) // sort by rating in descending order
+  .exec((err, books) => {
+    if (err) {
+      return res.status(500).json({ error: err });
+    }
+    res.json(books);
+  });
+}
+
+exports.getAllBooksSortedByNoOfReviews = (req, res) => {
+  const { order } = req.query;
+  
+  let sortOrder = 1;
+  if (order === 'desc') {
+    sortOrder = -1;
+  }
+
+  Book.find()
+  .sort({ "Number of ratings": sortOrder }) // sort by rating in descending order
+  .then((err, books) => {
+    if (err) {
+      return res.status(500).json({ error: err });
+    }
+    res.json(books);
+  });
+
+}
+
+exports.getFilteredBooks = (req, res) => {
+  let category = req.body.category ? req.body.category : undefined;
+  let author = req.body.author ? req.body.author : undefined;
+  
+  let filters = {
+    category: category,
+    author: author,
+  };
+  
+  let order = 1;
+  if (req.body.order === "dsc") order = -1;
+  
+  Book.find(filters)
+  .sort({ price: order })
+  .then((data) => {
+    res.json(data);
+  })
+  .catch((err)=>console.log(err))
+}
