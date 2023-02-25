@@ -2,7 +2,11 @@ const Book = require('../model/books')
 const Books = require('../model/books')
 
 exports.getAllBooks = (req,res)=>{
+    var limit = req.query.limit ? parseInt(req.query.limit) : 10;
+    var skip = req.query.skip ? parseInt(req.query.page) : 0;
     Books.find()
+        .limit(limit)
+        .skip((skip-1)*limit)
         .then((data)=>{
             res.json(data)
         })
@@ -102,3 +106,14 @@ exports.getFilteredBooks = (req, res) => {
   })
   .catch((err)=>console.log(err))
 }
+
+exports.getAllCategories = (req, res) => {
+  Book.distinct('category')
+    .then((data) => {
+      res.json(data);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: 'Error getting categories' });
+    });
+};
