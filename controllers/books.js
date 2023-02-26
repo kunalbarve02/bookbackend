@@ -140,7 +140,6 @@ exports.getBookByCategory = (req, res) => {
 
   Book.find({category: category})
   .then((data) => {
-    if(!data) return res.status(404).json({ error: 'No books found' });
     res.status(200).json(data);
   })
   .catch((err) => {
