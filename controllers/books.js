@@ -117,3 +117,35 @@ exports.getAllCategories = (req, res) => {
       res.status(500).json({ error: 'Error getting categories' });
     });
 };
+
+exports.searchBooks = (req, res) => {
+  const { search } = req.query;
+  
+  Book.find(
+      { title: { $regex: search, $options: 'i' } }
+  )
+  .then((data) => {
+    if(!data) return res.status(404).json({ error: 'No books found' });
+    res.status(200).json(data);
+  }
+  )
+  .catch((err) => {
+    console.log(err);
+    res.status(500).json({ error: 'Error getting books' });
+  });
+}
+
+exports.getBookByCategory = (req, res) => {
+  var category = req.profile.favoriteCategory
+
+  Book.find({category: category})
+  .then((data) => {
+    if(!data) return res.status(404).json({ error: 'No books found' });
+    res.status(200).json(data);
+  })
+  .catch((err) => {
+    console.log(err);
+    res.status(500).json({ error: 'Error getting books' });
+  }
+  )
+}
