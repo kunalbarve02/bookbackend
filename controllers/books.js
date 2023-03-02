@@ -4,7 +4,7 @@ const Books = require('../model/books')
 exports.getAllBooks = (req,res)=>{
     console.log("getAllBooks")
     var limit = req.query.limit ? parseInt(req.query.limit) : 10;
-    var skip = req.query.skip ? parseInt(req.query.page) : 1;
+    var skip = req.query.skip ? parseInt(req.query.skip) : 1;
     Books.find()
         .limit(limit)
         .skip((skip-1)*limit)
@@ -38,7 +38,7 @@ exports.getBookById = (req, res) => {
 exports.getAllBooksSortedByPrice = (req, res) => {
   const { order } = req.query;
   var limit = req.query.limit ? parseInt(req.query.limit) : 10;
-  var skip = req.query.skip ? parseInt(req.query.page) : 1;
+  var skip = req.query.skip ? parseInt(req.query.skip) : 1;
   console.log("getAllBooksSortedByPrice")
   
   let sortOrder = 1;
@@ -63,7 +63,7 @@ exports.getAllBooksSortedByRating = (req, res) => {
   console.log("getAllBooksSortedByRating")
   const { order } = req.query;
   var limit = req.query.limit ? parseInt(req.query.limit) : 10;
-  var skip = req.query.skip ? parseInt(req.query.page) : 1;
+  var skip = req.query.skip ? parseInt(req.query.skip) : 1;
 
   let sortOrder = 1;
   if (order === 'desc') {
@@ -86,7 +86,7 @@ exports.getAllBooksSortedByNoOfReviews = (req, res) => {
   console.log("getAllBooksSortedByNoOfReviews")
   const { order } = req.query;
   var limit = req.query.limit ? parseInt(req.query.limit) : 10;
-  var skip = req.query.skip ? parseInt(req.query.page) : 1;
+  var skip = req.query.skip ? parseInt(req.query.skip) : 1;
 
   let sortOrder = 1;
   if (order === 'desc') {
@@ -119,7 +119,7 @@ exports.getFilteredBooks = (req, res) => {
     query.Author = author;
   }
   var limit = req.query.limit ? parseInt(req.query.limit) : 10;
-  var skip = req.query.skip ? parseInt(req.query.page) : 1;
+  var skip = req.query.skip ? parseInt(req.query.skip) : 1;
 
   let order = 1;
   if (req.body.order === "dsc") order = -1;
@@ -171,7 +171,7 @@ exports.searchBooks = (req, res) => {
 
 exports.getBookByCategory = (req, res) => {
   var limit = req.query.limit ? parseInt(req.query.limit) : 10;
-  var skip = req.query.skip ? parseInt(req.query.page) : 1;
+  var skip = req.query.skip ? parseInt(req.query.skip) : 1;
   var category = req.profile.favoriteCategory
 
   Book.find({Category: category})
