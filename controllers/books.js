@@ -2,7 +2,6 @@ const Book = require('../model/books')
 const Books = require('../model/books')
 
 exports.getAllBooks = (req,res)=>{
-    console.log("getAllBooks")
     var limit = req.query.limit ? parseInt(req.query.limit) : 10;
     var skip = req.query.skip ? parseInt(req.query.skip) : 1;
     Books.find()
@@ -18,7 +17,6 @@ exports.getAllBooks = (req,res)=>{
 }
 
 exports.getBookById = (req, res) => {
-    console.log("getBookById")
     const bookId = req.params.bookId;
     console.log(bookId)
     Books.findById(bookId)
@@ -39,7 +37,6 @@ exports.getAllBooksSortedByPrice = (req, res) => {
   const { order } = req.query;
   var limit = req.query.limit ? parseInt(req.query.limit) : 10;
   var skip = req.query.skip ? parseInt(req.query.skip) : 1;
-  console.log("getAllBooksSortedByPrice")
   
   let sortOrder = 1;
   if (order === 'desc') {
@@ -60,7 +57,6 @@ exports.getAllBooksSortedByPrice = (req, res) => {
 }  
 
 exports.getAllBooksSortedByRating = (req, res) => {
-  console.log("getAllBooksSortedByRating")
   const { order } = req.query;
   var limit = req.query.limit ? parseInt(req.query.limit) : 10;
   var skip = req.query.skip ? parseInt(req.query.skip) : 1;
@@ -83,7 +79,6 @@ exports.getAllBooksSortedByRating = (req, res) => {
 }
 
 exports.getAllBooksSortedByNoOfReviews = (req, res) => {
-  console.log("getAllBooksSortedByNoOfReviews")
   const { order } = req.query;
   var limit = req.query.limit ? parseInt(req.query.limit) : 10;
   var skip = req.query.skip ? parseInt(req.query.skip) : 1;
@@ -107,7 +102,6 @@ exports.getAllBooksSortedByNoOfReviews = (req, res) => {
 }
 
 exports.getFilteredBooks = (req, res) => {
-  console.log("getFilteredBooks")
   const { category, author } = req.body;
   const query = {};
 
@@ -139,7 +133,6 @@ exports.getFilteredBooks = (req, res) => {
 }
 
 exports.getAllCategories = (req, res) => {
-  console.log("getAllCategories")
   Book.distinct('Category')
     .then((data) => {
       res.json(data);
