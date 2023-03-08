@@ -18,7 +18,6 @@ exports.getAllBooks = (req,res)=>{
 
 exports.getBookById = (req, res) => {
     const bookId = req.params.bookId;
-    console.log(bookId)
     Books.findById(bookId)
       .then((book) => {
         if (!book) {
@@ -117,8 +116,6 @@ exports.getFilteredBooks = (req, res) => {
 
   let order = 1;
   if (req.body.order === "dsc") order = -1;
-  
-  console.log(query)
 
   Book.find(
     query
@@ -145,7 +142,6 @@ exports.getAllCategories = (req, res) => {
 
 exports.searchBooks = (req, res) => {
   const { search } = req.query;
-  console.log(search)
   Book.find(
     { Title: { $regex: search, $options: 'i' } },
   )
@@ -159,8 +155,6 @@ exports.searchBooks = (req, res) => {
     res.status(500).json({ error: 'Error getting books' });
   });
 }
-
-
 
 exports.getBookByCategory = (req, res) => {
   var limit = req.query.limit ? parseInt(req.query.limit) : 10;
