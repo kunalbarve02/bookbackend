@@ -68,7 +68,7 @@ exports.getAllBooksSortedByRating = (req, res) => {
   Book.find()
   .limit(limit)
   .skip((skip-1)*limit)
-  .sort({ "Rating out of 5 stars": sortOrder }) // sort by rating in descending order
+  .sort({ "Rating out of 5 stars": sortOrder })
   .exec((err, books) => {
     if (err) {
       return res.status(500).json({ error: err });
@@ -90,7 +90,7 @@ exports.getAllBooksSortedByNoOfReviews = (req, res) => {
   Book.find()
   .limit(limit)
   .skip((skip-1)*limit)
-  .sort({ "Number of ratings": sortOrder }) // sort by rating in descending order
+  .sort({ "Number of ratings": sortOrder })
   .then((err, books) => {
     if (err) {
       return res.status(500).json({ error: err });
@@ -103,17 +103,16 @@ exports.getAllBooksSortedByNoOfReviews = (req, res) => {
 exports.getFilteredBooks = (req, res) => {
   const { category, author } = req.body;
   const query = {};
-
   if (category) {
     query.Category = category;
   }
-
   if (author) {
     query.Author = author;
   }
+
   var limit = req.query.limit ? parseInt(req.query.limit) : 10;
   var skip = req.query.skip ? parseInt(req.query.skip) : 1;
-
+  
   let order = 1;
   if (req.body.order === "dsc") order = -1;
 
