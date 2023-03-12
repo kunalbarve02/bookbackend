@@ -101,13 +101,22 @@ exports.getAllBooksSortedByNoOfReviews = (req, res) => {
 }
 
 exports.getFilteredBooks = (req, res) => {
-  const { category, author } = req.body;
+  const { category, author, minPrice, maxPrice } = req.body;
   const query = {};
   if (category) {
     query.Category = category;
   }
   if (author) {
     query.Author = author;
+  }
+  if(minPrice && maxPrice){
+    query['Paperback.Hardcover Price'] = { $gte: minPrice, $lte: maxPrice };
+  }
+  else if(minPrice){
+    query['Paperback.Hardcover Price'] = { $gte: minPrice };
+  }
+  else if(maxPrice){
+    query['Paperback.Hardcover Price'] = { $lte: maxPrice };
   }
 
   var limit = req.query.limit ? parseInt(req.query.limit) : 10;
