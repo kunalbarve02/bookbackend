@@ -13,5 +13,6 @@ router.get("/books/sort/rating",getAllBooksSortedByRating)
 router.get("/books/sort/noOfReviews",getAllBooksSortedByNoOfReviews)
 router.get("/books/filter",getFilteredBooks)
 router.get("/books/categories",getAllCategories)
+router.get("/books/getallAuthors",getAllAuthors)
 
 module.exports = router;

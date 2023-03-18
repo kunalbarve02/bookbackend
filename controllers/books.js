@@ -91,11 +91,12 @@ exports.getAllBooksSortedByNoOfReviews = (req, res) => {
   .limit(limit)
   .skip((skip-1)*limit)
   .sort({ "Number of ratings": sortOrder })
-  .then((err, books) => {
-    if (err) {
-      return res.status(500).json({ error: err });
-    }
+  .then((books) => {
     res.json(books);
+  })
+  .catch((err) => {
+    console.log(err);
+    res.status(500).json({ error: 'Error getting books by price' });
   });
 
 }
@@ -180,4 +181,27 @@ exports.getBookByCategory = (req, res) => {
     res.status(500).json({ error: 'Error getting books' });
   }
 )
+}
+
+exports.getAllAuthors = (req, res) => {
+  Book.distinct('Author')
+    .then((data) => {
+      res.json(data)
+    })
+    .catch((err) => {
+      console.log(err)
+      res.status(500).json({ error: 'Error getting authors' });
+    })
+}
+
+exports.getBookByAuthor = (req, res) => {
+
+  Book.find({Author: req.body.author})
+  .then((data) => {
+    res.status(200).json(data);
+  })
+  .catch((err) => {
+    console.log(err);
+    res.status(500).json({ error: 'Error getting books' });
+  })
 }
