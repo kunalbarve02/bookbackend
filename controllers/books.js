@@ -1,29 +1,27 @@
 const Book = require('../model/books')
-const Books = require('../model/books')
 
 exports.getAllBooks = (req,res)=>{
     var limit = req.query.limit ? parseInt(req.query.limit) : 10;
     var skip = req.query.skip ? parseInt(req.query.skip) : 1;
-    Books.find()
-        .limit(limit)
-        .skip((skip-1)*limit)
-        .then((data)=>{
-            res.json(data)
-        })
-        .catch((err)=>{
-            res.status(500).json({ error: 'Internal server error' })
-            console.log(err)
-        })
+    Book.find()
+      .limit(limit)
+      .skip((skip-1)*limit)
+      .then((data)=>{
+          res.json(data)
+      })
+      .catch((err)=>{
+          res.status(500).json({ error: 'Internal server error' })
+          console.log(err)
+      })
 }
 
 exports.getBookById = (req, res) => {
     const bookId = req.params.bookId;
-    Books.findById(bookId)
+    Book.findById(bookId)
       .then((book) => {
         if (!book) {
           return res.status(404).json({ message: 'Book not found' });
         }
-        console.log(book)
         res.json(book);
       })
       .catch((err) => {
@@ -102,7 +100,7 @@ exports.getAllBooksSortedByNoOfReviews = (req, res) => {
 }
 
 exports.getFilteredBooks = (req, res) => {
-  const { category, author, minPrice, maxPrice } = req.body;
+  const { category, author, minPrice, maxPrice } = req.query;
   const query = {};
   if (category) {
     query.Category = category;
