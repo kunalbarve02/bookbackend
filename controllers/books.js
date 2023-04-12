@@ -101,6 +101,7 @@ exports.getAllBooksSortedByNoOfReviews = (req, res) => {
 
 exports.getFilteredBooks = (req, res) => {
   const { category, author, minPrice, maxPrice } = req.query;
+  console.log(req.query)
   const query = {};
   if (category) {
     query.Category = category;
@@ -137,8 +138,10 @@ exports.getFilteredBooks = (req, res) => {
 }
 
 exports.getAllCategories = (req, res) => {
+
   Book.distinct('Category')
     .then((data) => {
+      console.log(data)
       res.json(data);
     })
     .catch((err) => {
@@ -180,6 +183,7 @@ exports.getBookByCategory = (req, res) => {
   }
 )
 }
+
 
 exports.getAllAuthors = (req, res) => {
   Book.distinct('Author')
