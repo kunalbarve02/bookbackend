@@ -76,13 +76,13 @@ exports.getAllBooksSortedByRating = (req, res) => {
 }
 
 exports.getAllBooksSortedByNoOfReviews = (req, res) => {
-  const { order } = req.query;
-  var limit = req.query.limit ? parseInt(req.query.limit) : 10;
-  var skip = req.query.skip ? parseInt(req.query.skip) : 1;
+  const { order } = req.query
+  var limit = req.query.limit ? parseInt(req.query.limit) : 10
+  var skip = req.query.skip ? parseInt(req.query.skip) : 1
 
-  let sortOrder = 1;
+  let sortOrder = 1
   if (order === 'desc') {
-    sortOrder = -1;
+    sortOrder = -1
   }
 
   Book.find()
@@ -90,39 +90,51 @@ exports.getAllBooksSortedByNoOfReviews = (req, res) => {
   .skip((skip-1)*limit)
   .sort({ "Number of ratings": sortOrder })
   .then((books) => {
-    res.json(books);
+    res.json(books)
   })
   .catch((err) => {
-    console.log(err);
-    res.status(500).json({ error: 'Error getting books by price' });
+    console.log(err)
+    res.status(500).json({ error: 'Error getting books by price' })
   });
 
 }
 
 exports.getFilteredBooks = (req, res) => {
-  const { category, author, minPrice, maxPrice } = req.query;
-  const query = {};
+  var { category, author, minPrice, maxPrice } = req.query
+  const query = {}
   if (category) {
-    query.Category = category;
+    console.log(category)
+    query.Category = category
   }
   if (author) {
     query.Author = author;
   }
   if(minPrice && maxPrice){
-    query['Paperback.Hardcover Price'] = { $gte: minPrice, $lte: maxPrice };
+    //minPrice = parseFloat(minPrice)
+    //maxPrice = parseFloat(maxPrice)
+    query["Paperback/Hardcover Price"] = JSON.stringify({ $gte: minPrice, $lte: maxPrice }, (key, value) => {
+      if (typeof key === 'string') {
+        return `"${key}":${value}`;
+      }
+      return value;
+    });
   }
   else if(minPrice){
-    query['Paperback.Hardcover Price'] = { $gte: minPrice };
+    //minPrice = parseFloat(minPrice)
+    query['Paperback/Hardcover Price'] = JSON.parse(`{ "$gte": ${minPrice} }`)
   }
   else if(maxPrice){
-    query['Paperback.Hardcover Price'] = { $lte: maxPrice };
+    maxPrice = parseFloat(maxPrice)
+    query["Paperback/Hardcover Price"] = { $lte: maxPrice }
   }
 
-  var limit = req.query.limit ? parseInt(req.query.limit) : 10;
-  var skip = req.query.skip ? parseInt(req.query.skip) : 1;
+  console.log(query)
+
+  var limit = req.query.limit ? parseInt(req.query.limit) : 10
+  var skip = req.query.skip ? parseInt(req.query.skip) : 1
   
   let order = 1;
-  if (req.body.order === "dsc") order = -1;
+  if (req.body.order === "dsc") order = -1
 
   Book.find(
     query
