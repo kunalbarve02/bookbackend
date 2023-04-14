@@ -110,8 +110,6 @@ exports.getFilteredBooks = (req, res) => {
     query.Author = author;
   }
   if(minPrice && maxPrice){
-    //minPrice = parseFloat(minPrice)
-    //maxPrice = parseFloat(maxPrice)
     query["Paperback/Hardcover Price"] = JSON.stringify({ $gte: minPrice, $lte: maxPrice }, (key, value) => {
       if (typeof key === 'string') {
         return `"${key}":${value}`;
@@ -120,15 +118,11 @@ exports.getFilteredBooks = (req, res) => {
     });
   }
   else if(minPrice){
-    //minPrice = parseFloat(minPrice)
     query['Paperback/Hardcover Price'] = JSON.parse(`{ "$gte": ${minPrice} }`)
   }
   else if(maxPrice){
-    maxPrice = parseFloat(maxPrice)
     query["Paperback/Hardcover Price"] = { $lte: maxPrice }
   }
-
-  console.log(query)
 
   var limit = req.query.limit ? parseInt(req.query.limit) : 10
   var skip = req.query.skip ? parseInt(req.query.skip) : 1
@@ -214,4 +208,5 @@ exports.getBookByAuthor = (req, res) => {
     console.log(err);
     res.status(500).json({ error: 'Error getting books' });
   })
+  
 }
