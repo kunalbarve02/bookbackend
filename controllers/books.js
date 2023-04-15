@@ -100,7 +100,7 @@ exports.getAllBooksSortedByNoOfReviews = (req, res) => {
 }
 
 exports.getFilteredBooks = (req, res) => {
-  const { category, author, minPrice, maxPrice } = req.query;
+  const { category, author, minPrice, maxPrice , sortBy} = req.query;
   console.log(req.query)
   const query = {};
   if (category) {
@@ -121,6 +121,8 @@ exports.getFilteredBooks = (req, res) => {
   else if(maxPrice){
     query['Paperback/Hardcover Price'] = { $lte: maxPrice }
   }
+
+  var fields = ['Paperback/Hardcover Price', 'Rating out of 5 stars', 'Number of ratings', 'Category', 'Author']
 
   fields.includes(sortBy)? sortBy : 'Paperback/Hardcover Price'
 
@@ -156,7 +158,9 @@ exports.getAllCategories = (req, res) => {
 };
 
 exports.searchBooks = (req, res) => {
+
   const { search } = req.query;
+
   Book.find(
     { Title: { $regex: search, $options: 'i' } },
   )
@@ -195,10 +199,10 @@ exports.getAllAuthors = (req, res) => {
   let skip = req.params.skip ? parseInt(req.params.skip) : 1;
 
   Book.distinct('Author')
-    .limit(limit)
-    .skip((skip-1)*limit)
     .then((data) => {
-      res.json(data)
+      console.log(data.length,'asda')
+      const Sliceddata = data.slice(0,100)
+      res.json(Sliceddata)
     })
     .catch((err) => {
       console.log(err)
