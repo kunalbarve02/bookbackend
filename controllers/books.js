@@ -56,7 +56,7 @@ exports.getAllBooksSortedByPrice = (req, res) => {
 exports.getAllBooksSortedByRating = (req, res) => {
   const { order } = req.query;
   var limit = req.query.limit ? parseInt(req.query.limit) : 10;
-  var skip = req.query.skip ? parseInt(req.query.skip) : 1;
+  var skip = req.query.skip ? parseInt(req.query.skip) : 2;
 
   let sortOrder = 1;
   if (order === 'desc') {
@@ -174,7 +174,7 @@ exports.searchBooks = (req, res) => {
 }
 
 exports.getBookByCategory = (req, res) => {
-  var limit = req.query.limit ? parseInt(req.query.limit) : 10;
+  var limit =  50;
   var skip = req.query.skip ? parseInt(req.query.skip) : 1;
   var category = req.profile.favoriteCategory
 
