@@ -78,79 +78,51 @@ exports.getReadBooks = (req, res) => {
         });
 }
 
-exports.getRecommendations = async(req, res) => {
-    const {wishlist,readBooks}=await User.findOne({ _id: req.profile._id })
-        .populate("wishlist")
-        .populate("readBooks")
-        .exec((err, user) => {
-        if (err) {
-            return res.status(400).json({
-            error: "No wishlist found"
-            });
-        }
-        res.json(user.wishlist);
-    })
-
-    var wsfavAuthor, wsfavCategory, wsfavAuthorCount=0, wsfavCategoryCount=0
-
-    await wishlist.forEach(book => {
-
-        var authorCount=0, categoryCount=0;
-        wishlist.forEach(book2 => {
-            if(book2.Author==book.Author){
-                authorCount++;
-            }
-            if(book2.Category==book.Category){
-                categoryCount++;
-            }
-        }
-        );
-
-        if(authorCount>wsfavAuthorCount){
-            wsfavAuthorCount=authorCount;
-            wsfavAuthor=book.Author;
-        }
-        if(categoryCount>wsfavCategoryCount){
-            wsfavCategoryCount=categoryCount;
-            wsfavCategory=book.Category;
-        }
-
-    })
-
-    var rbfavAuthor, rbfavCategory, rbfavAuthorCount=0, rbfavCategoryCount=0
-
-    await readBooks.forEach(book => {
-        
-        var authorCount=0, categoryCount=0; 
-        readBooks.forEach(book2 => {
-            if(book2.Author==book.Author){
-                authorCount++;
-            }
-            if(book2.Category==book.Category){
-                categoryCount++;
-            }
-        }
-        );
-
-        if(authorCount>rbfavAuthorCount){
-            rbfavAuthorCount=authorCount;
-            rbfavAuthor=book.Author;
-        }
-        if(categoryCount>rbfavCategoryCount){
-            rbfavCategoryCount=categoryCount;
-            rbfavCategory=book.Category;
-        }
-
-    })
-
-    Book.find({$or:[{Author:wsfavAuthor},{Category:wsfavCategory},{Author:rbfavAuthor},{Category:rbfavCategory}]})
-    .then((books) => {
-        res.json(books);
+exports.getRecommendedBooks=async (userId)=>{
+    try {
+      const user = await User.findById(userId)
+        .populate("wishlist", "Category Author")
+        .populate("readBooks", "Category Author");
+  
+      // Get most occurring author and category from wishlist
+      let wishlistAuthors = {};
+      let wishlistCategories = {};
+      user.wishlist.forEach((book) => {
+        wishlistAuthors[book.Author] = (wishlistAuthors[book.Author] || 0) + 1;
+        wishlistCategories[book.Category] = (wishlistCategories[book.Category] || 0) + 1;
+      });
+      const mostOccurringWishlistAuthor = Object.keys(wishlistAuthors).reduce((a, b) =>
+        wishlistAuthors[a] > wishlistAuthors[b] ? a : b
+      );
+      const mostOccurringWishlistCategory = Object.keys(wishlistCategories).reduce((a, b) =>
+        wishlistCategories[a] > wishlistCategories[b] ? a : b
+      );
+  
+      // Get most occurring author and category from readBooks
+      let readBooksAuthors = {};
+      let readBooksCategories = {};
+      user.readBooks.forEach((book) => {
+        readBooksAuthors[book.Author] = (readBooksAuthors[book.Author] || 0) + 1;
+        readBooksCategories[book.Category] = (readBooksCategories[book.Category] || 0) + 1;
+      });
+      const mostOccurringReadBooksAuthor = Object.keys(readBooksAuthors).reduce((a, b) =>
+        readBooksAuthors[a] > readBooksAuthors[b] ? a : b
+      );
+      const mostOccurringReadBooksCategory = Object.keys(readBooksCategories).reduce((a, b) =>
+        readBooksCategories[a] > readBooksCategories[b] ? a : b
+      );
+  
+      // Get books with most occurring author and category
+      const recommendedBooks = await Book.find({
+        $or: [
+          { Author: mostOccurringWishlistAuthor, Category: mostOccurringWishlistCategory },
+          { Author: mostOccurringReadBooksAuthor, Category: mostOccurringReadBooksCategory }
+        ]
+      });
+  
+      return recommendedBooks;
+    } catch (err) {
+      console.log(err);
     }
-    )
-    .catch((err) => {
-        console.log(err);
-    }
-    );
-
-}
+  }
+  

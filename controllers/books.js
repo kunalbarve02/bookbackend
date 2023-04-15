@@ -100,42 +100,43 @@ exports.getAllBooksSortedByNoOfReviews = (req, res) => {
 }
 
 exports.getFilteredBooks = (req, res) => {
-  var { category, author, minPrice, maxPrice } = req.query
+  var { category, author, minPrice, maxPrice,sortBy } = req.query
   const query = {}
   if (category) {
     console.log(category)
     query.Category = category
   }
+
   if (author) {
     query.Author = author;
   }
+
   if(minPrice && maxPrice){
-    query["Paperback/Hardcover Price"] = JSON.stringify({ $gte: minPrice, $lte: maxPrice }, (key, value) => {
-      if (typeof key === 'string') {
-        return `"${key}":${value}`;
-      }
-      return value;
-    });
+    query['Paperback/Hardcover Price'] = { $gte: minPrice, $lte: maxPrice }
   }
   else if(minPrice){
-    query['Paperback/Hardcover Price'] = JSON.parse(`{ "$gte": ${minPrice} }`)
+    query['Paperback/Hardcover Price'] = { $gte: minPrice }
   }
   else if(maxPrice){
-    query["Paperback/Hardcover Price"] = { $lte: maxPrice }
+    query['Paperback/Hardcover Price'] = { $lte: maxPrice }
   }
+
+  query.sortBy = sortBy || 'Paperback/Hardcover Price'
 
   var limit = req.query.limit ? parseInt(req.query.limit) : 10
   var skip = req.query.skip ? parseInt(req.query.skip) : 1
   
   let order = 1;
-  if (req.body.order === "dsc") order = -1
+  if (req.query.order === "dsc") order = -1
+
+
 
   Book.find(
     query
   )
   .limit(limit)
   .skip((skip-1)*limit)
-  .sort({ price: order })
+  .sort({ sortBy: order })
   .then((data) => {
     res.json(data);
   })
