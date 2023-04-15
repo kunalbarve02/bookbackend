@@ -1,3 +1,4 @@
+const Book = require("../model/books");
 const User = require("../model/user")
 
 exports.getUserById = (req, res, next, id) => {
@@ -76,3 +77,66 @@ exports.getReadBooks = (req, res) => {
         res.json(user.readBooks);
         });
 }
+
+exports.getRecommendedBooks=async (userId)=>{
+
+    var limit = 10;
+    var skip =  1;
+
+    try {
+      const user = await User.findById(userId)
+        .populate("wishlist", "Category Author")
+        .populate("readBooks", "Category Author");
+  
+      // Get most occurring author and category from wishlist
+      let wishlistAuthors = {};
+      let wishlistCategories = {};
+      user.wishlist.forEach((book) => {
+        wishlistAuthors[book.Author] = (wishlistAuthors[book.Author] || 0) + 1;
+        wishlistCategories[book.Category] = (wishlistCategories[book.Category] || 0) + 1;
+      });
+      const mostOccurringWishlistAuthor = Object.keys(wishlistAuthors).reduce((a, b) =>
+        wishlistAuthors[a] > wishlistAuthors[b] ? a : b
+      );
+      const mostOccurringWishlistCategory = Object.keys(wishlistCategories).reduce((a, b) =>
+        wishlistCategories[a] > wishlistCategories[b] ? a : b
+      );
+  
+      // Get most occurring author and category from readBooks
+      let readBooksAuthors = {};
+      let readBooksCategories = {};
+      user.readBooks.forEach((book) => {
+        readBooksAuthors[book.Author] = (readBooksAuthors[book.Author] || 0) + 1;
+        readBooksCategories[book.Category] = (readBooksCategories[book.Category] || 0) + 1;
+      });
+      const mostOccurringReadBooksAuthor = Object.keys(readBooksAuthors).reduce((a, b) =>
+        readBooksAuthors[a] > readBooksAuthors[b] ? a : b
+      );
+      const mostOccurringReadBooksCategory = Object.keys(readBooksCategories).reduce((a, b) =>
+        readBooksCategories[a] > readBooksCategories[b] ? a : b
+      );
+  
+      // Get books with most occurring author and category
+      Book.find({
+          $or: [
+            { Author: mostOccurringWishlistAuthor, Category: mostOccurringWishlistCategory },
+            { Author: mostOccurringReadBooksAuthor, Category: mostOccurringReadBooksCategory }
+          ]
+        })
+      .limit(limit)
+      .skip(skip)
+      .exec((err, books) => {
+        if (err) {
+          return res.status(400).json({
+            error: "No books found"
+          });
+        }
+        res.json(books);
+      });
+
+      return recommendedBooks;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  

@@ -36,10 +36,6 @@ var userSchema = new mongoose.Schema(
         ref: "Book"
       }
     ],
-    favoriteCategory:{
-      type: String,
-      required: true
-    },
     readBooks: [
       {
         type: mongoose.Schema.Types.ObjectId,
