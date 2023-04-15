@@ -132,8 +132,6 @@ exports.getFilteredBooks = (req, res) => {
   let order = 1;
   if (req.query.order === "dsc") order = -1
 
-
-
   Book.find(
     query
   )
@@ -192,7 +190,12 @@ exports.getBookByCategory = (req, res) => {
 }
 
 exports.getAllAuthors = (req, res) => {
+  let limit = req.params.limit ? parseInt(req.params.limit) : 10;
+  let skip = req.params.skip ? parseInt(req.params.skip) : 1;
+
   Book.distinct('Author')
+    .limit(limit)
+    .skip((skip-1)*limit)
     .then((data) => {
       res.json(data)
     })
