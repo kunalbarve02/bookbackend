@@ -56,7 +56,7 @@ exports.getAllBooksSortedByPrice = (req, res) => {
 exports.getAllBooksSortedByRating = (req, res) => {
   const { order } = req.query;
   var limit = req.query.limit ? parseInt(req.query.limit) : 10;
-  var skip = req.query.skip ? parseInt(req.query.skip) : 2;
+  var skip = req.query.skip ? parseInt(req.query.skip) : 1;
 
   let sortOrder = 1;
   if (order === 'desc') {
@@ -130,8 +130,6 @@ exports.getFilteredBooks = (req, res) => {
   let order = 1;
   if (req.query.order === "dsc") order = -1
 
-
-
   Book.find(
     query
   )
@@ -174,7 +172,7 @@ exports.searchBooks = (req, res) => {
 }
 
 exports.getBookByCategory = (req, res) => {
-  var limit =  50;
+  var limit = req.query.limit ? parseInt(req.query.limit) : 10;
   var skip = req.query.skip ? parseInt(req.query.skip) : 1;
   var category = req.profile.favoriteCategory
 
@@ -193,7 +191,12 @@ exports.getBookByCategory = (req, res) => {
 
 
 exports.getAllAuthors = (req, res) => {
+  let limit = req.params.limit ? parseInt(req.params.limit) : 10;
+  let skip = req.params.skip ? parseInt(req.params.skip) : 1;
+
   Book.distinct('Author')
+    .limit(limit)
+    .skip((skip-1)*limit)
     .then((data) => {
       res.json(data)
     })

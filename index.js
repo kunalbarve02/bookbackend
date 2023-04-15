@@ -7,7 +7,6 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const Book = require("./model/books");
-// const data = require("./history.json");
 const fs = require('fs');
 const csv = require('csv-parser');
 

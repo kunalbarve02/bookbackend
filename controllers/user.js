@@ -78,17 +78,18 @@ exports.getReadBooks = (req, res) => {
         });
 }
 
-exports.getRecommendedBooks=async (userId)=>{
+exports.getRecommendedBooks=async (req,res)=>{
 
-    var limit = 10;
-    var skip =  1;
+     console.log(req.profile._id)
+
+    var limit = req.query.limit ? parseInt(req.query.limit) : 10
+    var skip = req.query.skip ? parseInt(req.query.skip) : 1
 
     try {
-      const user = await User.findById(userId)
+      const user = await User.findById(req.profile._id)
         .populate("wishlist", "Category Author")
-        .populate("readBooks", "Category Author");
+        .populate("readBooks", "Category Author")
   
-      // Get most occurring author and category from wishlist
       let wishlistAuthors = {};
       let wishlistCategories = {};
       user.wishlist.forEach((book) => {
@@ -102,7 +103,6 @@ exports.getRecommendedBooks=async (userId)=>{
         wishlistCategories[a] > wishlistCategories[b] ? a : b
       );
   
-      // Get most occurring author and category from readBooks
       let readBooksAuthors = {};
       let readBooksCategories = {};
       user.readBooks.forEach((book) => {
@@ -116,7 +116,9 @@ exports.getRecommendedBooks=async (userId)=>{
         readBooksCategories[a] > readBooksCategories[b] ? a : b
       );
   
-      // Get books with most occurring author and category
+      console.log(mostOccurringWishlistAuthor, mostOccurringReadBooksAuthor)
+      console.log(mostOccurringWishlistCategory, mostOccurringReadBooksCategory)
+
       Book.find({
           $or: [
             { Author: mostOccurringWishlistAuthor, Category: mostOccurringWishlistCategory },
@@ -134,7 +136,6 @@ exports.getRecommendedBooks=async (userId)=>{
         res.json(books);
       });
 
-      return recommendedBooks;
     } catch (err) {
       console.log(err);
     }
