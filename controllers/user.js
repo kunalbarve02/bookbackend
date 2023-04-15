@@ -80,8 +80,8 @@ exports.getReadBooks = (req, res) => {
 
 exports.getRecommendedBooks=async (userId)=>{
 
-    var limit = req.query.limit ? parseInt(req.query.limit) : 10;
-    var skip = req.query.skip ? parseInt(req.query.skip) : 1;
+    var limit = 10;
+    var skip =  1;
 
     try {
       const user = await User.findById(userId)
