@@ -79,6 +79,10 @@ exports.getReadBooks = (req, res) => {
 }
 
 exports.getRecommendedBooks=async (userId)=>{
+
+    var limit = req.query.limit ? parseInt(req.query.limit) : 10;
+    var skip = req.query.skip ? parseInt(req.query.skip) : 1;
+
     try {
       const user = await User.findById(userId)
         .populate("wishlist", "Category Author")
@@ -113,13 +117,23 @@ exports.getRecommendedBooks=async (userId)=>{
       );
   
       // Get books with most occurring author and category
-      const recommendedBooks = await Book.find({
-        $or: [
-          { Author: mostOccurringWishlistAuthor, Category: mostOccurringWishlistCategory },
-          { Author: mostOccurringReadBooksAuthor, Category: mostOccurringReadBooksCategory }
-        ]
+      Book.find({
+          $or: [
+            { Author: mostOccurringWishlistAuthor, Category: mostOccurringWishlistCategory },
+            { Author: mostOccurringReadBooksAuthor, Category: mostOccurringReadBooksCategory }
+          ]
+        })
+      .limit(limit)
+      .skip(skip)
+      .exec((err, books) => {
+        if (err) {
+          return res.status(400).json({
+            error: "No books found"
+          });
+        }
+        res.json(books);
       });
-  
+
       return recommendedBooks;
     } catch (err) {
       console.log(err);

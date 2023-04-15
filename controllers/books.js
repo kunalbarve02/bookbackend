@@ -41,7 +41,7 @@ exports.getAllBooksSortedByPrice = (req, res) => {
   }
 
   Book.find()
-    .sort({ 'Paperback.Hardcover Price': sortOrder })
+    .sort({ 'Paperback/Hardcover Price': sortOrder })
     .limit(limit)
     .skip((skip-1)*limit)
     .then((books) => {
