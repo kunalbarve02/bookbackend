@@ -100,7 +100,10 @@ exports.getAllBooksSortedByNoOfReviews = (req, res) => {
 }
 
 exports.getFilteredBooks = (req, res) => {
-  var { category, author, minPrice, maxPrice,sortBy } = req.query
+  var { category, author, minPrice, maxPrice, sortBy } = req.query
+
+  var fields = ['Paperback/Hardcover Price', 'Rating out of 5 stars', 'Number of ratings', 'Category', 'Author']
+
   const query = {}
   if (category) {
     console.log(category)
@@ -121,7 +124,7 @@ exports.getFilteredBooks = (req, res) => {
     query['Paperback/Hardcover Price'] = { $lte: maxPrice }
   }
 
-  query.sortBy = sortBy || 'Paperback/Hardcover Price'
+  fields.includes(sortBy)? sortBy : 'Paperback/Hardcover Price'
 
   var limit = req.query.limit ? parseInt(req.query.limit) : 10
   var skip = req.query.skip ? parseInt(req.query.skip) : 1
