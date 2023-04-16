@@ -81,11 +81,12 @@ exports.getAllBooksSortedByNoOfReviews = (req, res) => {
   var skip = req.query.skip ? parseInt(req.query.skip) : 1
 
   let sortOrder = 1
-  if (order === 'desc') {
+  if (order === 'dsc') {
     sortOrder = -1
   }
 
   Book.find()
+  .select({ 'Number of ratings': 1})
   .limit(limit)
   .skip((skip-1)*limit)
   .sort({ "Number of ratings": sortOrder })
