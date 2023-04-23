@@ -77,6 +77,7 @@ exports.getAllBooksSortedByRating = (req, res) => {
 
 exports.getAllBooksSortedByNoOfReviews = (req, res) => {
   const { order } = req.query
+  console.log(order)
   var limit = req.query.limit ? parseInt(req.query.limit) : 10
   var skip = req.query.skip ? parseInt(req.query.skip) : 1
 
@@ -130,7 +131,7 @@ exports.getFilteredBooks = (req, res) => {
   var skip = req.query.skip ? parseInt(req.query.skip) : 1
   
   let order = 1;
-  if (req.query.order === "dsc") order = -1
+  if (req.query.order === "desc") order = -1
 
   Book.find(
     query
@@ -158,9 +159,8 @@ exports.getAllCategories = (req, res) => {
 };
 
 exports.searchBooks = (req, res) => {
-
+  
   const { search } = req.query;
-
   Book.find(
     { Title: { $regex: search, $options: 'i' } },
   )
